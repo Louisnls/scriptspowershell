@@ -1,0 +1,39 @@
+
+Import-Module ActiveDirectory
+
+# Chemin du fichier CSV contenant la liste des utilisateurs
+$csvFile = "C:\scripts\a.csv"
+
+# Nom du groupe "IT"
+$itGroup = "IT"
+
+# Nom du groupe "Gestion"
+$gestionGroup = "Gestion"
+
+# Lire le fichier CSV
+$users = Import-Csv $csvFile
+
+# Parcourir chaque utilisateur dans la liste
+foreach ($user in $users) {
+    # Récupérer les détails de l'utilisateur depuis le fichier CSV
+    $username = $user.Username
+    $userPassword = $user.Password
+    $firstName = $user.FirstName
+    $lastName = $user.LastName
+    $department = $user.Department
+
+    # Créer l'utilisateur dans Active Directory
+    $securePassword = ConvertTo-SecureString -String $userPassword -AsPlainText -Force
+    New-ADUser -SamAccountName $username -UserPrincipalName "$username@yourdomain.com" -Name "$firstName $lastName" -GivenName $firstName -Surname $lastName -Enabled $true -PasswordNeverExpires $true -AccountPassword $securePassword
+
+    # Ajouter l'utilisateur au groupe approprié en fonction du département
+    if ($department -eq "IT") {
+        Add-ADGroupMember -Identity $IT -Members $username
+    }
+    elseif ($department -eq "Gestion") {
+        Add-ADGroupMember -Identity $Gestion -Members $username
+    }
+    else {
+        Write-Host "Département non reconnu pour l'utilisateur $username."
+    }
+}

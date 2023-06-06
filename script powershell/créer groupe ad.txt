@@ -1,0 +1,23 @@
+# Importer le module Active Directory
+Import-Module ActiveDirectory
+
+# Nom du groupe "IT"
+$itGroup = "IT"
+
+# Nom du groupe "Gestion"
+$gestionGroup = "Gestion"
+
+# Créer le groupe "IT" s'il n'existe pas déjà
+if (-not (Get-ADGroup -Filter {Name -eq $itGroup})) {
+    New-ADGroup -Name $itGroup -GroupScope Global -Path "OU=group,DC=louis-itic,DC=local"
+    Write-Host "Groupe $itGroup créé avec succès."
+}
+
+# Créer le groupe "Gestion" s'il n'existe pas déjà
+if (-not (Get-ADGroup -Filter {Name -eq $gestionGroup})) {
+    New-ADGroup -Name $gestionGroup -GroupScope Global -Path "OU=group,DC=louis-itic,DC=local"
+    Write-Host "Groupe $gestionGroup créé avec succès."
+}
+
+Groupe IT créé avec succès.
+Groupe Gestion créé avec succès.
